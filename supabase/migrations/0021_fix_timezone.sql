@@ -1,0 +1,16 @@
+-- Fuso do banco: America/Cuiaba (escritório fica em Rondonópolis/MT).
+--
+-- Sem isto, o Postgres usa UTC por padrão (é o default da imagem Docker do
+-- Supabase self-hosted, e também do Supabase Cloud) pra tudo que depende do
+-- "agora"/"hoje" da sessão: current_date, now()::date, CURRENT_TIMESTAMP.
+-- Isso já causava um bug real: o trigger que grava a data de entrega de uma
+-- obrigação (obrigacao_marca_entrega, em 0006_fiscal.sql) usa
+-- `current_date` — de noite em Cuiabá (a partir de ~20h, UTC-4), o UTC já
+-- virou o dia seguinte, então a data de entrega gravada ficava um dia à
+-- frente da data real em que o trabalho foi feito.
+--
+-- `ALTER DATABASE ... SET timezone` fica gravado no catálogo do banco
+-- (pg_db_role_setting) e vale pra toda sessão nova a partir daqui — não
+-- depende de configurar variável de ambiente no container nem de reiniciar
+-- nada manualmente.
+alter database postgres set timezone to 'America/Cuiaba';

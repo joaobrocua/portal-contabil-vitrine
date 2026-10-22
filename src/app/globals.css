@@ -1,0 +1,264 @@
+@import "tailwindcss";
+
+/*
+  Portal Contábil — tema "sala de operações"
+
+  Shell escuro grafite (quente, não preto puro), carmim como destaque quente,
+  dourado no secundário, verde no positivo. Tipografia grotesca forte.
+  Assinatura: asa do caduceu (core/ui/wing.tsx).
+*/
+@theme {
+  /* Fundos (grafite quente) */
+  --color-bg: #0f1419;
+  --color-surface-1: #151b22; /* cards, sidebar */
+  --color-surface-2: #1c242d; /* elementos elevados, header de tabela, inputs */
+  --color-surface-3: #252f3a; /* hover */
+  --color-line: #2f3b48; /* fios */
+  --color-line-soft: #232d38;
+
+  /* Texto */
+  --color-text: #e9eef4;
+  --color-text-dim: #9fb0c2;
+  --color-text-faint: #6b7d90;
+
+  /* Marca — brilham no escuro */
+  --color-carmine: #e5352f; /* destaque principal / atrasado */
+  --color-carmine-bright: #ff5a4d;
+  --color-carmine-tint: #37130f; /* fundo de chip carmim */
+  --color-azul: #3b82f6; /* cor da marca (botões, destaques) */
+  --color-azul-bright: #60a5fa;
+  --color-azul-tint: #10213a;
+  --color-ouro: #eab54e; /* destaque secundário / aguardando */
+  --color-ouro-bright: #f6c968;
+  --color-ouro-tint: #33260f;
+  --color-ok: #3ec488; /* concluído */
+  --color-ok-tint: #0f2b20;
+  --color-info: #57a6e6;
+  --color-info-tint: #10222f;
+
+  /* compat — componentes antigos ainda citam brand/gold/neutral/canvas */
+  --color-brand: var(--color-azul);
+  --color-brand-hover: var(--color-azul-bright);
+  --color-gold: var(--color-ouro);
+  --color-gold-light: var(--color-ouro-bright);
+  --color-paper: var(--color-bg);
+  --color-surface: var(--color-surface-1);
+  --color-ledger: var(--color-line);
+  --color-ink: var(--color-text);
+  --color-ink-soft: var(--color-text-dim);
+  --color-canvas: var(--color-bg);
+
+  --color-neutral-50: #1b232c;
+  --color-neutral-100: #2b221e;
+  --color-neutral-200: #3a2f2a;
+  --color-neutral-300: #4c3f38;
+  --color-neutral-400: #7d7069;
+  --color-neutral-500: #9a8c81;
+  --color-neutral-600: #b3a59a;
+  --color-neutral-700: #cdc1b8;
+  --color-neutral-800: #e3d9d1;
+  --color-neutral-900: #f4ede7;
+  --color-neutral-950: #ffffff;
+
+  --font-sans:
+    var(--font-sans), ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  --font-mono:
+    var(--font-mono), ui-monospace, "SF Mono", "Roboto Mono", Menlo, monospace;
+  --font-display:
+    var(--font-display), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --radius: 0.625rem;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  font-size: 17px; /* base um pouco maior; utilitários rem acompanham */
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Títulos grotescos */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Rótulo de seção — grotesco, com "tique" de asa via ::before opcional */
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ouro);
+}
+
+/* Dados: identificadores e valores em mono tabular */
+.data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Números grandes do dashboard */
+.stat {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.rule-gold {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--color-ouro) 0%,
+    color-mix(in srgb, var(--color-ouro) 30%, transparent) 45%,
+    transparent 100%
+  );
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-azul) 35%, transparent);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/*
+ * Animações leves — só CSS (opacity/transform, que a placa de vídeo faz
+ * sozinha, sem recalcular layout). Nenhuma biblioteca extra.
+ * `backwards` (e não `both`) de propósito: terminada a animação, o elemento
+ * fica sem transform nenhum — um transform residual quebraria qualquer
+ * `position: fixed` dentro dele.
+ */
+
+/* Troca de página: o conteúdo entra suave (ver app/(app)/template.tsx). */
+@keyframes pagina-entra {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.pagina-entra {
+  animation: pagina-entra 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Filhos entram um depois do outro (cascata curta, até o 8º). */
+.cascata > * {
+  animation: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.cascata > :nth-child(2) { animation-delay: 40ms; }
+.cascata > :nth-child(3) { animation-delay: 80ms; }
+.cascata > :nth-child(4) { animation-delay: 120ms; }
+.cascata > :nth-child(5) { animation-delay: 160ms; }
+.cascata > :nth-child(6) { animation-delay: 200ms; }
+.cascata > :nth-child(7) { animation-delay: 240ms; }
+.cascata > :nth-child(n + 8) { animation-delay: 280ms; }
+
+/* Aviso (toast) sobe da borda de baixo. */
+@keyframes toast-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+.toast-entra {
+  animation: toast-entra 0.25s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Marcador do item ativo no menu lateral "cresce" ao trocar de página. */
+@keyframes barra-ativa {
+  from {
+    transform: scaleY(0);
+  }
+}
+.barra-ativa {
+  animation: barra-ativa 0.25s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Menu do celular desliza da esquerda. */
+@keyframes gaveta-entra {
+  from {
+    transform: translateX(-100%);
+  }
+}
+.gaveta-entra {
+  animation: gaveta-entra 0.22s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Quadro clicável levanta um pouco ao passar o mouse. */
+.levanta {
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+.levanta:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-ouro) 40%, var(--color-line));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Campos de data/hora: o clique abre o calendário (AbrirCalendario), então o cursor é de botão e o ícone fica mais visível. */
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="datetime-local"] {
+  cursor: pointer;
+}
+input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.85;
+}
